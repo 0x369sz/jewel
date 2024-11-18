@@ -13,5 +13,5 @@ plugins {
 
 include(":jewel-core")
 include(":jewel-ui")
-include(":jewel-os")
+include(":jewel-laf")
 include(":jewel-testing")

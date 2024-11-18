@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.slobodanzivanovic.jewel.os.windows;
+package com.slobodanzivanovic.jewel.laf.core
 
-import com.slobodanzivanovic.jewel.os.OSConfigurator;
+class JewelLightLaf : JewelLaf() {
+	override fun getName(): String {
+		return "Jewel Light"
+	}
 
-public class Windows implements OSConfigurator {
-	@Override
-	public void configure() {
-		System.out.println("Windows");
+	override fun getDescription(): String {
+		return "Jewel Light Look and Feel"
 	}
 }

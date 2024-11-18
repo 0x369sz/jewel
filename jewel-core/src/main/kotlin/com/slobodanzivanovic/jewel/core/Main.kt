@@ -16,36 +16,40 @@
 
 package com.slobodanzivanovic.jewel.core
 
-import com.slobodanzivanovic.jewel.os.OS
-import com.slobodanzivanovic.jewel.os.OSConfigurator
+import com.slobodanzivanovic.jewel.laf.core.JewelDarkLaf
+import com.slobodanzivanovic.jewel.laf.core.util.PlatformInfo
 import com.slobodanzivanovic.jewel.ui.EditorWindow
+import java.awt.Dimension
 import javax.swing.JFrame
+import javax.swing.SwingUtilities
+import javax.swing.UIManager
+import javax.swing.UnsupportedLookAndFeelException
 
 fun main() {
-	val os = OS.getInstance()
+	val platformInfo = PlatformInfo.getInstance()
 
-	val osType = os.type
+	platformInfo.logSystemInfo()
 
-	println("Operating System: ${os.name}")
-	println("OS Version: ${os.version}")
-	println("OS Architecture: ${os.arch}")
-	println("Detected OS Type: $osType")
+	try {
+		UIManager.setLookAndFeel(JewelDarkLaf())
+		if (PlatformInfo.IS_MAC) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true")
+		}
+	} catch (laf: UnsupportedLookAndFeelException) {
+		laf.printStackTrace()
+	}
 
-	val configurator: OSConfigurator? = os.configurator
-	configurator?.configure()
-
-	JFrame().apply {
-		defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-		isResizable = true
-		title = "Jewel"
-
-		val editorWindow = EditorWindow()
-		add(editorWindow)
-
-		pack()
-		setLocationRelativeTo(null)
-		isVisible = true
-
-		editorWindow.startEditorThread()
+	SwingUtilities.invokeLater {
+		JFrame().apply {
+			add(EditorWindow().also { editorWindow ->
+				editorWindow.startEditorThread()
+			})
+			defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+			isResizable = true
+			minimumSize = Dimension(800, 600)
+			pack()
+			setLocationRelativeTo(null)
+			isVisible = true
+		}
 	}
 }

@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package com.slobodanzivanovic.jewel.os;
+package com.slobodanzivanovic.jewel.laf.core
 
-public interface OSConfigurator {
-	void configure();
+class JewelDarkLaf : JewelLaf() {
+	override fun getName(): String {
+		return "Jewel Dark"
+	}
+
+	override fun getDescription(): String {
+		return "Jewel Dark Look and Feel"
+	}
 }
