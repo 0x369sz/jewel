@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package com.slobodanzivanovic.jewel.core
+package com.slobodanzivanovic.jewel.os.windows;
 
-fun main() {
-	println("Hello World!")
+import com.slobodanzivanovic.jewel.os.OSConfigurator;
+
+public class Windows implements OSConfigurator {
+	@Override
+	public void configure() {
+		System.out.println("Windows");
+	}
 }

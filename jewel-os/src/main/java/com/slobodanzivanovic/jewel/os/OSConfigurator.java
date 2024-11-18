@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package com.slobodanzivanovic.jewel.core;
+package com.slobodanzivanovic.jewel.os;
 
-public class Main {
-	public static void main(String[] args) {
-		TestKt.main();
-		System.out.println("Hello, World!");
-	}
+public interface OSConfigurator {
+	void configure();
 }

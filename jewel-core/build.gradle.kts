@@ -3,6 +3,11 @@ plugins {
 	application
 }
 
+dependencies {
+	implementation(project(":jewel-ui"))
+	implementation(project(":jewel-os"))
+}
+
 application {
-	mainClass = "com.slobodanzivanovic.jewel.core.Main"
+	mainClass = "com.slobodanzivanovic.jewel.core.MainKt"
 }
