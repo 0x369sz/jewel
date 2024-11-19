@@ -17,9 +17,11 @@
 package com.slobodanzivanovic.jewel.core
 
 import com.slobodanzivanovic.jewel.laf.core.JewelDarkLaf
-import com.slobodanzivanovic.jewel.laf.core.util.PlatformInfo
 import com.slobodanzivanovic.jewel.ui.EditorWindow
+import com.slobodanzivanovic.jewel.util.logging.Logger
+import com.slobodanzivanovic.jewel.util.platform.PlatformInfo
 import java.awt.Dimension
+import java.io.IOException
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
@@ -51,5 +53,18 @@ fun main() {
 			setLocationRelativeTo(null)
 			isVisible = true
 		}
+	}
+
+	try {
+		val logger = Logger("main")
+		logger.info("Application started")
+
+		val sessionDirectory = logger.sessionDirectory
+		println("Session directory is: $sessionDirectory")
+
+		val logFilePath = logger.logFilePath
+		println("Log file is located at: $logFilePath")
+	} catch (e: IOException) {
+		System.err.println("Failed to initialize logger: " + e.message)
 	}
 }

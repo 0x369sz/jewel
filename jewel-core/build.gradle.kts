@@ -6,6 +6,7 @@ plugins {
 dependencies {
 	implementation(project(":jewel-ui"))
 	implementation(project(":jewel-laf"))
+	implementation(project(":jewel-util"))
 }
 
 application {
