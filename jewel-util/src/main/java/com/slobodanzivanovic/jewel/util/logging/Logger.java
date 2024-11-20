@@ -26,6 +26,21 @@ import java.util.Comparator;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
+/**
+ * A thread-safe logging utility that provides file-based logging capabilities with automatic log rotation
+ * and cleanup features. The logger creates log files in platform-specific directories and manages log
+ * file size and retention periods.
+ * <p>
+ * Key features:
+ * - Thread-safe logging operations
+ * - Automatic log rotation when size limit is reached
+ * - Automatic cleanup of old log files
+ * - Platform-specific log directory locations
+ * - Session-based log organization
+ * </p>
+ *
+ * @author Slobodan Zivanovic
+ */
 public class Logger {
 	private final Path logFilePath;
 	private final ReentrantLock lock = new ReentrantLock();
@@ -41,10 +56,20 @@ public class Logger {
 		SESSION_FOLDER = LocalDateTime.now().format(SESSION_FOLDER_FORMATTER);
 	}
 
+	/**
+	 * Defines the available logging levels.
+	 */
 	public enum LogLevel {
 		INFO, WARNING, ERROR, DEBUG
 	}
 
+	/**
+	 * Constructs a new Logger instance with the specified filename.
+	 *
+	 * @param filename The base name for the log file (without extension)
+	 * @throws IOException If the log directory cannot be created or accessed,
+	 *                     or if there's insufficient disk space
+	 */
 	public Logger(String filename) throws IOException {
 		Path logDir = getSystemLogDirectory().resolve(SESSION_FOLDER);
 		Files.createDirectories(logDir);
@@ -59,22 +84,49 @@ public class Logger {
 		cleanupOldLogs();
 	}
 
+	/**
+	 * Logs an informational message.
+	 *
+	 * @param message The message to be logged
+	 */
 	public void info(String message) {
 		log(LogLevel.INFO, message);
 	}
 
+	/**
+	 * Logs a warning message.
+	 *
+	 * @param message The warning message to be logged
+	 */
 	public void warning(String message) {
 		log(LogLevel.WARNING, message);
 	}
 
+	/**
+	 * Logs an error message.
+	 *
+	 * @param message The error message to be logged
+	 */
 	public void error(String message) {
 		log(LogLevel.ERROR, message);
 	}
 
+	/**
+	 * Logs a debug message.
+	 *
+	 * @param message The debug message to be logged
+	 */
 	public void debug(String message) {
 		log(LogLevel.DEBUG, message);
 	}
 
+	/**
+	 * Internal method to handle the actual logging process.
+	 * Thread-safe implementation using ReentrantLock.
+	 *
+	 * @param level   The logging level of the message
+	 * @param message The message to be logged
+	 */
 	private void log(LogLevel level, String message) {
 		lock.lock();
 		try {
@@ -96,6 +148,12 @@ public class Logger {
 		}
 	}
 
+	/**
+	 * Rotates the current log file by renaming it with a timestamp
+	 * and creating a new empty log file.
+	 *
+	 * @throws IOException If the file rotation operation fails
+	 */
 	private void rotateLog() throws IOException {
 		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
 		Path rotatedFile = logFilePath.resolveSibling(logFilePath.getFileName().toString().replace(".log", "-" + timestamp + ".log"));
@@ -104,6 +162,9 @@ public class Logger {
 		Files.createFile(logFilePath);
 	}
 
+	/**
+	 * Removes log folders older than MAX_LOG_AGE_DAYS.
+	 */
 	private void cleanupOldLogs() {
 		try {
 			Path logsDir = getSystemLogDirectory();
@@ -128,6 +189,12 @@ public class Logger {
 		}
 	}
 
+	/**
+	 * Recursively deletes a directory and all its contents.
+	 *
+	 * @param path The path to the directory to be deleted
+	 * @throws IOException If the deletion operation fails
+	 */
 	private void deleteDirectory(Path path) throws IOException {
 		if (!Files.exists(path)) {
 			return;
@@ -144,30 +211,51 @@ public class Logger {
 		}
 	}
 
+	/**
+	 * Returns the platform-specific system log directory.
+	 * Windows: %APPDATA%\Jewel\logs
+	 * macOS: ~/Library/Logs/Jewel
+	 * Linux/Unix: ~/.jewel/logs
+	 *
+	 * @return Path to the system's log directory
+	 */
 	private Path getSystemLogDirectory() {
 		String userHome = System.getProperty("user.home");
 
 		if (PlatformInfo.IS_WINDOWS) {
-			// Windows: %APPDATA%\Jewel\logs
 			return Paths.get(System.getenv("APPDATA"), "Jewel", "logs");
 		} else if (PlatformInfo.IS_MAC) {
 			// NOTE: We probably should use the home for both macOS and Linux
-			// macOS: ~/Library/Logs/Jewel
 			return Paths.get(userHome, "Library", "Logs", "Jewel");
 		} else {
-			// Linux/Unix: ~/.jewel/logs
 			return Paths.get(userHome, ".jewel", "logs");
 		}
 	}
 
+	/**
+	 * Returns the path to the current log file.
+	 *
+	 * @return Path object representing the current log file location
+	 */
 	public Path getLogFilePath() {
 		return logFilePath;
 	}
 
+	/**
+	 * Returns the path to the current session directory.
+	 *
+	 * @return Path object representing the current session directory
+	 */
 	public Path getSessionDirectory() {
 		return logFilePath.getParent();
 	}
 
+	/**
+	 * Validates the system conditions required for logging.
+	 * Checks for sufficient disk space and write permissions.
+	 *
+	 * @throws IOException If system requirements are not met
+	 */
 	private void validateSystem() throws IOException {
 		FileStore store = Files.getFileStore(logFilePath.getParent());
 		long usableSpace = store.getUsableSpace();
