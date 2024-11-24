@@ -18,7 +18,7 @@ package com.slobodanzivanovic.jewel.util.logging;
 
 import com.slobodanzivanovic.jewel.util.platform.PlatformInfo;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,8 +27,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 /**
- * A thread-safe logging utility that provides file-based logging capabilities with automatic log rotation
- * and cleanup features. The logger creates log files in platform-specific directories and manages log
+ * A thread-safe logging utility that provides file-based logging capabilities
+ * with automatic log rotation
+ * and cleanup features. The logger creates log files in platform-specific
+ * directories and manages log
  * file size and retention periods.
  * <p>
  * Key features:
@@ -156,7 +158,8 @@ public class Logger {
 	 */
 	private void rotateLog() throws IOException {
 		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-		Path rotatedFile = logFilePath.resolveSibling(logFilePath.getFileName().toString().replace(".log", "-" + timestamp + ".log"));
+		Path rotatedFile = logFilePath
+			.resolveSibling(logFilePath.getFileName().toString().replace(".log", "-" + timestamp + ".log"));
 
 		Files.move(logFilePath, rotatedFile, StandardCopyOption.REPLACE_EXISTING);
 		Files.createFile(logFilePath);
@@ -174,7 +177,8 @@ public class Logger {
 				folders.forEach(folder -> {
 					if (Files.isDirectory(folder)) {
 						try {
-							LocalDateTime folderDate = LocalDateTime.parse(folder.getFileName().toString(), SESSION_FOLDER_FORMATTER);
+							LocalDateTime folderDate = LocalDateTime.parse(folder.getFileName().toString(),
+								SESSION_FOLDER_FORMATTER);
 							if (folderDate.isBefore(cutoffDate)) {
 								deleteDirectory(folder);
 							}
@@ -261,7 +265,8 @@ public class Logger {
 		long usableSpace = store.getUsableSpace();
 
 		if (usableSpace < MIN_REQUIRED_SPACE) {
-			throw new IOException("Insufficient disk space for logging. Required: " + MIN_REQUIRED_SPACE + " bytes, Available: " + usableSpace + " bytes");
+			throw new IOException("Insufficient disk space for logging. Required: " + MIN_REQUIRED_SPACE
+				+ " bytes, Available: " + usableSpace + " bytes");
 		}
 
 		if (!Files.isWritable(logFilePath.getParent())) {

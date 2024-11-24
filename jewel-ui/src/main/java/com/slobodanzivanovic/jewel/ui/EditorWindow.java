@@ -26,20 +26,19 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.tree.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
 
 public class EditorWindow extends JPanel implements Runnable {
 	private static final double SCREEN_WIDTH_RATIO = 0.55;
@@ -274,7 +273,8 @@ public class EditorWindow extends JPanel implements Runnable {
 			textArea.getTextArea().setText(content);
 			tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), file.getName());
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(this, "Error reading file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Error reading file: "
+				+ ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
